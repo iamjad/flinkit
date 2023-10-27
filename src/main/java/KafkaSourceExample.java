@@ -29,12 +29,12 @@ public class KafkaSourceExample {
         // let's run this aggregation. Select count(numberOfPersonsKilled), zipcode from car_crash group by zip_code
         // Add Kafka consumer to the Flink environment
         DataStream<CarCrash> kafkaStream = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Sources");
-        // stream keyby zipCode, then window by 1 day, then sum the numberOfPersonsInjured and return the zipCode and sum
+        // stream keyby zipCode, window by 2 mins, sum the total people killed and return the total sum by zipCode
 //        kafkaStream.keyBy(CarCrash::getZipCode)
 //                .window(TumblingProcessingTimeWindows.of(Time.minutes(2)))
 //                .aggregate(new CarCrashZipCodeAggregator())
-//                .print(); 
-
+//                .print();
+        // stream keyby crashDate, window by 2 mins, sum the total people killed and return the total sum by crash date
         kafkaStream.keyBy(CarCrash::getCrashDate)
                 .window(TumblingProcessingTimeWindows.of(Time.minutes(2)))
                 .aggregate(new CarCrashDateAggregator())
