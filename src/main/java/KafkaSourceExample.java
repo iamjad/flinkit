@@ -1,5 +1,5 @@
 
-import util.CarCrashDateAggregator;
+import custom.CarCrashDateAggregator;
 import model.*;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -13,8 +13,8 @@ import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class kafkaTopicConsumer {
-    private static final Logger log = LoggerFactory.getLogger(kafkaTopicConsumer.class);
+public class KafkaSourceExample {
+    private static final Logger log = LoggerFactory.getLogger(KafkaSourceExample.class);
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -33,7 +33,7 @@ public class kafkaTopicConsumer {
 //        kafkaStream.keyBy(CarCrash::getZipCode)
 //                .window(TumblingProcessingTimeWindows.of(Time.minutes(2)))
 //                .aggregate(new CarCrashZipCodeAggregator())
-//                .print();
+//                .print(); 
 
         kafkaStream.keyBy(CarCrash::getCrashDate)
                 .window(TumblingProcessingTimeWindows.of(Time.minutes(2)))

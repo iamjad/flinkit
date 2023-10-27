@@ -1,6 +1,6 @@
-package util;
+package custom;
 
-import common.Common;
+import common.CommonUtil;
 import model.CarCrash;
 import model.CarCrashDateAccumulator;
 import org.apache.flink.api.common.functions.AggregateFunction;
@@ -15,16 +15,16 @@ public class CarCrashDateAggregator implements AggregateFunction<CarCrash, CarCr
 
         @Override
         public CarCrashDateAccumulator add(CarCrash carCrash, CarCrashDateAccumulator carCrashDateAccumulator) {
-            carCrashDateAccumulator.setCrashDateEpoch(Common.safeDateToLong(carCrash.getCrashDate()));
+            carCrashDateAccumulator.setCrashDateEpoch(CommonUtil.safeDateToLong(carCrash.getCrashDate()));
             carCrashDateAccumulator.setCrashDate(carCrash.getCrashDate());
-            carCrashDateAccumulator.setNumberOfPersonsKilled(carCrashDateAccumulator.getNumberOfPersonsKilled() + Common.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
-            carCrashDateAccumulator.setNumberOfPersonsInjured(carCrashDateAccumulator.getNumberOfPersonsInjured() + Common.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
-            carCrashDateAccumulator.setNumberOfPedestriansKilled(carCrashDateAccumulator.getNumberOfPedestriansKilled() + Common.safeStringToInt(carCrash.getNumberOfPedestriansKilled()));
-            carCrashDateAccumulator.setNumberOfPedestriansInjured(carCrashDateAccumulator.getNumberOfPedestriansInjured() + Common.safeStringToInt(carCrash.getNumberOfPedestriansInjured()));
-            carCrashDateAccumulator.setNumberOfCyclistKilled(carCrashDateAccumulator.getNumberOfCyclistKilled() + Common.safeStringToInt(carCrash.getNumberOfCyclistKilled()));
-            carCrashDateAccumulator.setNumberOfCyclistInjured(carCrashDateAccumulator.getNumberOfCyclistInjured() + Common.safeStringToInt(carCrash.getNumberOfCyclistInjured()));
-            carCrashDateAccumulator.setNumberOfMotoristKilled(carCrashDateAccumulator.getNumberOfMotoristKilled() + Common.safeStringToInt(carCrash.getNumberOfMotoristKilled()));
-            carCrashDateAccumulator.setNumberOfMotoristInjured(carCrashDateAccumulator.getNumberOfMotoristInjured() + Common.safeStringToInt(carCrash.getNumberOfMotoristInjured()));
+            carCrashDateAccumulator.setNumberOfPersonsKilled(carCrashDateAccumulator.getNumberOfPersonsKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
+            carCrashDateAccumulator.setNumberOfPersonsInjured(carCrashDateAccumulator.getNumberOfPersonsInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
+            carCrashDateAccumulator.setNumberOfPedestriansKilled(carCrashDateAccumulator.getNumberOfPedestriansKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfPedestriansKilled()));
+            carCrashDateAccumulator.setNumberOfPedestriansInjured(carCrashDateAccumulator.getNumberOfPedestriansInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfPedestriansInjured()));
+            carCrashDateAccumulator.setNumberOfCyclistKilled(carCrashDateAccumulator.getNumberOfCyclistKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfCyclistKilled()));
+            carCrashDateAccumulator.setNumberOfCyclistInjured(carCrashDateAccumulator.getNumberOfCyclistInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfCyclistInjured()));
+            carCrashDateAccumulator.setNumberOfMotoristKilled(carCrashDateAccumulator.getNumberOfMotoristKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfMotoristKilled()));
+            carCrashDateAccumulator.setNumberOfMotoristInjured(carCrashDateAccumulator.getNumberOfMotoristInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfMotoristInjured()));
             return carCrashDateAccumulator;
         }
 

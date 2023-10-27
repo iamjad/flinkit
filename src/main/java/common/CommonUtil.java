@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Common {
+public class CommonUtil {
     public static int safeStringToInt(String input) {
         int result = 0;
         try {

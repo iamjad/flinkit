@@ -1,6 +1,6 @@
-package util;
+package custom;
 
-import common.Common;
+import common.CommonUtil;
 import model.CarCrash;
 import model.CarCrashZipCodeAccumulator;
 import org.apache.flink.api.common.functions.AggregateFunction;
@@ -16,14 +16,14 @@ public class CarCrashZipCodeAggregator implements AggregateFunction<CarCrash, Ca
     @Override
     public CarCrashZipCodeAccumulator add(CarCrash carCrash, CarCrashZipCodeAccumulator carCrashZipCodeAccumulator) {
         carCrashZipCodeAccumulator.setZipCode(carCrash.getZipCode().trim());
-        carCrashZipCodeAccumulator.setNumberOfPersonsKilled(carCrashZipCodeAccumulator.getNumberOfPersonsKilled() + Common.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
-        carCrashZipCodeAccumulator.setNumberOfPersonsInjured(carCrashZipCodeAccumulator.getNumberOfPersonsInjured() + Common.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
-        carCrashZipCodeAccumulator.setNumberOfPedestriansKilled(carCrashZipCodeAccumulator.getNumberOfPedestriansKilled() + Common.safeStringToInt(carCrash.getNumberOfPedestriansKilled()));
-        carCrashZipCodeAccumulator.setNumberOfPedestriansInjured(carCrashZipCodeAccumulator.getNumberOfPedestriansInjured() + Common.safeStringToInt(carCrash.getNumberOfPedestriansInjured()));
-        carCrashZipCodeAccumulator.setNumberOfCyclistKilled(carCrashZipCodeAccumulator.getNumberOfCyclistKilled() + Common.safeStringToInt(carCrash.getNumberOfCyclistKilled()));
-        carCrashZipCodeAccumulator.setNumberOfCyclistInjured(carCrashZipCodeAccumulator.getNumberOfCyclistInjured() + Common.safeStringToInt(carCrash.getNumberOfCyclistInjured()));
-        carCrashZipCodeAccumulator.setNumberOfMotoristKilled(carCrashZipCodeAccumulator.getNumberOfMotoristKilled() + Common.safeStringToInt(carCrash.getNumberOfMotoristKilled()));
-        carCrashZipCodeAccumulator.setNumberOfMotoristInjured(carCrashZipCodeAccumulator.getNumberOfMotoristInjured() + Common.safeStringToInt(carCrash.getNumberOfMotoristInjured()));
+        carCrashZipCodeAccumulator.setNumberOfPersonsKilled(carCrashZipCodeAccumulator.getNumberOfPersonsKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
+        carCrashZipCodeAccumulator.setNumberOfPersonsInjured(carCrashZipCodeAccumulator.getNumberOfPersonsInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfPersonsKilled()));
+        carCrashZipCodeAccumulator.setNumberOfPedestriansKilled(carCrashZipCodeAccumulator.getNumberOfPedestriansKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfPedestriansKilled()));
+        carCrashZipCodeAccumulator.setNumberOfPedestriansInjured(carCrashZipCodeAccumulator.getNumberOfPedestriansInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfPedestriansInjured()));
+        carCrashZipCodeAccumulator.setNumberOfCyclistKilled(carCrashZipCodeAccumulator.getNumberOfCyclistKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfCyclistKilled()));
+        carCrashZipCodeAccumulator.setNumberOfCyclistInjured(carCrashZipCodeAccumulator.getNumberOfCyclistInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfCyclistInjured()));
+        carCrashZipCodeAccumulator.setNumberOfMotoristKilled(carCrashZipCodeAccumulator.getNumberOfMotoristKilled() + CommonUtil.safeStringToInt(carCrash.getNumberOfMotoristKilled()));
+        carCrashZipCodeAccumulator.setNumberOfMotoristInjured(carCrashZipCodeAccumulator.getNumberOfMotoristInjured() + CommonUtil.safeStringToInt(carCrash.getNumberOfMotoristInjured()));
         return carCrashZipCodeAccumulator;
     }
 
