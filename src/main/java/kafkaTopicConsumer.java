@@ -1,20 +1,49 @@
 
+import util.CarCrashDateAggregator;
 import model.*;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
-import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
+import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class kafkaTopicConsumer {
+    private static final Logger log = LoggerFactory.getLogger(kafkaTopicConsumer.class);
 
-    public static void main1(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        var  kafkaSource =
+                KafkaSource.<CarCrash>builder().setBootstrapServers("localhost:9092")
+                        .setGroupId("flink_consumer2")
+                        .setTopics("mvvc-topic")
+                        .setStartingOffsets(OffsetsInitializer.committedOffsets(OffsetResetStrategy.EARLIEST))
+                        .setValueOnlyDeserializer(new CarCrashDeserializationSchema())
+                        .build();
+
+        // let's run this aggregation. Select count(numberOfPersonsKilled), zipcode from car_crash group by zip_code
+        // Add Kafka consumer to the Flink environment
+        DataStream<CarCrash> kafkaStream = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Sources");
+        // stream keyby zipCode, then window by 1 day, then sum the numberOfPersonsInjured and return the zipCode and sum
+//        kafkaStream.keyBy(CarCrash::getZipCode)
+//                .window(TumblingProcessingTimeWindows.of(Time.minutes(2)))
+//                .aggregate(new CarCrashZipCodeAggregator())
+//                .print();
+
+        kafkaStream.keyBy(CarCrash::getCrashDate)
+                .window(TumblingProcessingTimeWindows.of(Time.minutes(2)))
+                .aggregate(new CarCrashDateAggregator())
+                .print();
+
+        // Execute the Flink environment
+        env.execute("Kafka Consumer Example");
+    }
+    public static void eventProcessor() throws Exception {
         KafkaSource<Event> source =
                 KafkaSource.<Event>builder()
                         .setBootstrapServers("localhost:9092")
@@ -28,27 +57,6 @@ public class kafkaTopicConsumer {
             @Override
             public String map(Event event) throws Exception {
                 return event.data;
-            }
-        }).print();
-        env.execute("Kafka Consumer Example");
-    }
-
-    public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        var  kafkaSource =
-                KafkaSource.<CarCrash>builder().setBootstrapServers("localhost:9092")
-                        .setGroupId("flink_consumer2")
-                        .setTopics("mvvc-topic")
-                        .setStartingOffsets(OffsetsInitializer.committedOffsets(OffsetResetStrategy.EARLIEST))
-                        .setValueOnlyDeserializer(new CarCrashDeserializationSchema())
-                        .build();
-
-        // Add Kafka consumer to the Flink environment
-        DataStream<CarCrash> kafkaStream = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Sources");
-        kafkaStream.filter(carCrash -> Integer.parseInt(carCrash.getNumberOfMotoristKilled()) >= 1).map(new MapFunction<CarCrash, String>() {
-            @Override
-            public String map(CarCrash carCrash) throws Exception {
-                return carCrash.getNumberOfPersonsKilled();
             }
         }).print();
         env.execute("Kafka Consumer Example");
