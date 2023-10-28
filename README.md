@@ -18,3 +18,12 @@ For this exercise, I download and installed latest Apache Kafka version followin
 # Execution
 
 I can run KafkaSourceExample.java locally or submit the job to the local Flink cluster.
+
+
+# Resources
+
+https://nightlies.apache.org/flink/flink-docs-release-1.17
+
+https://www.youtube.com/watch?v=xm1X9etMXps
+
+https://jbcodeforce.github.io/flink-studies/
