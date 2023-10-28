@@ -1,7 +1,18 @@
 # flinkit
-This repository contains custom Flink Aggregation implementation. It aggregates NY car crash data which is publicly available here: https://catalog.data.gov/dataset?q=&amp;sort=views_recent+desc
+This repository contains custom Flink Aggregation implementation. It aggregates NY car crash data, which is publicly available here: https://catalog.data.gov/dataset?q=&amp;sort=views_recent+desc
 
-The car crash data is converted from .csv to JSON format. Here is a sample JSON Object
+The code uses localhost Kafka broker as a source to read JSON objects and perform two custom aggregations using Zipcode and Crash_Date and count all the people killed in the car crashes. 
+
+Here is what this code does:
+1. Create a Stream Execution Environment
+2. Create KafkaSource, initialize it with Kafka Broker, Kafka consumer name, and kafka topic name, and read from the earliest offset
+3. It uses a custom Kafka value deserializer extended from AbstractDeserializationSchema, deserializing incoming JSON objects to JAVA POJO Objects called CarCrash. I could also have used KafkaRecordDeserializationSchema which gives me both the JSON object and topic partition and offset information. For this exercise, I am just focusing on deserializing the JSON and focusing on Aggregations.
+5. I'm now ready to perform aggregations on JAVA Object CarCrash. I wrote two different Aggregations, one called CarCrashDateAggregator and CarCrashZipCodeAggregator. Both implement AggregateFunction, taking incoming CarCrash objects, storing intermediate aggregation results in Accumulator objects, and Tuple2 of CarCrashZipCodeAccumulator and final sum. Let's break it down further
+6. I want to count all the people killed by crash date in a window of 2 minutes and stream them to some sink source. KafkaStream.keyBy method splits (group by) incoming CarCrash objects by crash date in a small window of 2 mins, and applies CarCrashDateAggregator. CarCrashDateAggregator implements an add method that takes incoming objects and gets people killed in that car crash and adds them to the running accumulator.
+7. Now you can either print it to send it to another Sink to store or process it further.
+8. This is the last step to run the execute method.
+
+The car crash data is converted from .csv to JSON format and posted to Kafka using a Python3 code not included in this example. 
 
 ```json
 {"CRASH_DATE":"12/14/2021","CRASH_TIME":"8:17","BOROUGH":"BRONX","ZIP_CODE":"10475",
@@ -20,7 +31,7 @@ Flink Version: 1.18.0
 Kafka Version: kafka_2.13-3.6.0
 Kafka Topic: mvcc-topic
 
-For this exercise, I download and installed latest Apache Kafka version following the quick start guide https://kafka.apache.org/documentation/#quickstart.
+For this exercise, I downloaded and installed the latest Apache Kafka version following the quick start guide https://kafka.apache.org/documentation/#quickstart.
 
 # Execution
 
