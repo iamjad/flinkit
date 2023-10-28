@@ -4,6 +4,7 @@ import model.*;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
@@ -26,7 +27,6 @@ public class KafkaSourceExample {
                         .setTopics("mvvc-topic")
                         .setStartingOffsets(OffsetsInitializer.committedOffsets(OffsetResetStrategy.EARLIEST))
                         .setValueOnlyDeserializer(new CarCrashDeserializationSchema())
-                        .setDeserializer(new CarCrashDeserializationSchema()
                         .build();
 
         // let's run this aggregation. Select count(numberOfPersonsKilled), zipcode from car_crash group by zip_code
@@ -41,14 +41,11 @@ public class KafkaSourceExample {
         kafkaStream.keyBy(CarCrash::getCrashDate)
                 .window(TumblingProcessingTimeWindows.of(Time.minutes(2)))
                 .aggregate(new CarCrashDateAggregator())
-                .addSink(KafkaSink.<Tuple2<CarCrashDateAccumulator, Integer>>builder()
+                .sinkTo(KafkaSink.<CarCrashDateAccumulator>builder()
                         .setBootstrapServers("localhost:9092")
-                        .setRecordSerializer(new CarCrashSinkSchema("car-crash-date-accumulator"))
+                        .setRecordSerializer(new CarCrashSinkSchema())
+                        .setDeliveryGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
                         .build());
-
-        // Add Kafka producer to the Flink environment to write the CarCrashZipCodeAccumulator to Kafka.
-
-
         // Execute the Flink environment
         env.execute("Kafka Consumer Example");
     }

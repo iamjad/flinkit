@@ -6,7 +6,7 @@ import model.CarCrashDateAccumulator;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 
-public class CarCrashDateAggregator implements AggregateFunction<CarCrash, CarCrashDateAccumulator, Tuple2<CarCrashDateAccumulator, Integer>> {
+public class CarCrashDateAggregator implements AggregateFunction<CarCrash, CarCrashDateAccumulator, CarCrashDateAccumulator> {
 
         @Override
         public CarCrashDateAccumulator createAccumulator() {
@@ -29,8 +29,8 @@ public class CarCrashDateAggregator implements AggregateFunction<CarCrash, CarCr
         }
 
         @Override
-        public Tuple2<CarCrashDateAccumulator, Integer> getResult(CarCrashDateAccumulator carCrashDateAccumulator) {
-            return new Tuple2<>(carCrashDateAccumulator, carCrashDateAccumulator.getTotalPeopleKilled());
+        public CarCrashDateAccumulator getResult(CarCrashDateAccumulator carCrashDateAccumulator) {
+            return carCrashDateAccumulator;
         }
 
         @Override
